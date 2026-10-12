@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the article given under preferred-citation."
+type: software
+title: "Neural gate control of the South Mirzachul main canal under supply shortage: code, data and results"
+version: 1.0.0
+date-released: 2026-10-13
+license: MIT
+repository-code: "https://github.com/6328484/south-mirzachul-neural-gate-control"
+authors:
+  - family-names: Seytov
+    given-names: Aybek J.
+    orcid: "https://orcid.org/0009-0002-8904-5178"
+    affiliation: "University of World Economy and Diplomacy, Tashkent, Uzbekistan"
+  - family-names: Abdujabborov
+    given-names: Zafar A.
+    orcid: "https://orcid.org/0009-0000-3938-7562"
+    affiliation: "National University of Uzbekistan named after Mirzo Ulugbek, Tashkent, Uzbekistan"
+    email: abdujabborovzafar518@gmail.com
+  - family-names: Choriyorov
+    given-names: Nurbek Q.
+    orcid: "https://orcid.org/0000-0001-7289-0303"
+    affiliation: "Research Institute of Irrigation and Water Problems; University of World Economy and Diplomacy, Tashkent, Uzbekistan"
+keywords:
+  - irrigation canal automation
+  - equitable water distribution
+  - water shortage
+  - neural network control
+  - evolution strategy
+  - Saint-Venant model
+preferred-citation:
+  type: article
+  title: "Equitable Water Distribution in a Large Irrigation Canal under Supply Shortage Using Neural Gate Control Trained on a Saint-Venant Model"
+  status: submitted
+  journal: "Water Resources Management"
+  year: 2026
+  authors:
+    - family-names: Seytov
+      given-names: Aybek J.
+      orcid: "https://orcid.org/0009-0002-8904-5178"
+    - family-names: Abdujabborov
+      given-names: Zafar A.
+      orcid: "https://orcid.org/0009-0000-3938-7562"
+    - family-names: Choriyorov
+      given-names: Nurbek Q.
+      orcid: "https://orcid.org/0000-0001-7289-0303"
