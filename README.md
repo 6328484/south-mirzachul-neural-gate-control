@@ -1,10 +1,16 @@
 # Neural gate control of the South Mirzachul main canal under supply shortage
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23351116.svg)](https://doi.org/10.5281/zenodo.23351116)
+
 Code, input data, trained controllers and simulation results for the article
 
 > Seytov A.J., Abdujabborov Z.A., Choriyorov N.Q. **Equitable Water Distribution in a Large Irrigation Canal under Supply Shortage Using Neural Gate Control Trained on a Saint-Venant Model.**
 
 The study tests whether a neural supervisory controller can share a supply shortage more equitably among the offtakes of the 123.7-km South Mirzachul main canal (Uzbekistan). It operates only gates that the canal already has: seven check gates, the tail gate and the regulators of five major branches. Everything runs on a one-dimensional Saint-Venant model of the canal built from its passport. The repository contains everything needed to rebuild Tables 1–4 and Figs. 2–8 of the article, either from the stored results (about 1 min), by re-simulating the stored controllers (about 10 min) or by retraining from scratch (about 7 h on two CPU cores).
+
+## Archived version
+
+Version 1.0.0 of this repository, the version described in the article, is archived on Zenodo with the DOI [10.5281/zenodo.23351117](https://doi.org/10.5281/zenodo.23351117). The DOI [10.5281/zenodo.23351116](https://doi.org/10.5281/zenodo.23351116) covers all versions and always resolves to the latest one.
 
 ## Repository layout
 

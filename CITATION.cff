@@ -18,6 +18,14 @@ version: "1.0.0"
 date-released: "2026-10-13"
 license: MIT
 repository-code: "https://github.com/6328484/south-mirzachul-neural-gate-control"
+doi: 10.5281/zenodo.23351116
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23351116
+    description: "Concept DOI: all versions of this repository; resolves to the latest version"
+  - type: doi
+    value: 10.5281/zenodo.23351117
+    description: "Version 1.0.0"
 authors:
   - family-names: Seytov
     given-names: Aybek J.
