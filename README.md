@@ -4,9 +4,20 @@
 
 Code, input data, trained controllers and simulation results for the article
 
-> Seytov A.J., Abdujabborov Z.A., Choriyorov N.Q. **Equitable Water Distribution in a Large Irrigation Canal under Supply Shortage Using Neural Gate Control Trained on a Saint-Venant Model.**
+> Seytov A.J., Abdujabborov Z.A., Choriyorov N.Q. **Neural supervisory gate control for sharing a supply shortage in a large irrigation main canal: benchmark against an optimized rule and robustness tests.** (Submitted to *Agricultural Water Management*; an earlier version was titled "Equitable Water Distribution in a Large Irrigation Canal under Supply Shortage Using Neural Gate Control Trained on a Saint-Venant Model".)
 
 The study tests whether a neural supervisory controller can share a supply shortage more equitably among the offtakes of the 123.7-km South Mirzachul main canal (Uzbekistan). It operates only gates that the canal already has: seven check gates, the tail gate and the regulators of five major branches. Everything runs on a one-dimensional Saint-Venant model of the canal built from its passport. The repository contains everything needed to rebuild Tables 1–4 and Figs. 2–8 of the article, either from the stored results (about 1 min), by re-simulating the stored controllers (about 10 min) or by retraining from scratch (about 7 h on two CPU cores).
+
+## What is new in version 1.1.0
+
+Version 1.1.0 adds the analyses of the revised article:
+
+- **Optimized staged rule** (`src/staged_rule.py`): a transparent 24-parameter supervisor (lagged, branch-specific cuts and shortage-dependent set-points) trained with the same evolution strategy, objective and budget as the neural supervisor — the fair benchmark of the network (Sects. 3.3–3.4, 4.1–4.4, 5.1).
+- **Gate-effort trade-off**: the 40-generation nominal continuation of the neural supervisor repeated with the gate-movement weights ×5 and ×15 (Sect. 4.5, Fig. 8).
+- **Measurement noise and faults** (`src/robustness_tests.py`): level errors of 2 and 5 cm, a stuck check gate, a stuck branch regulator and a 6-h SCADA outage (Sect. 4.7, Table 6).
+- **Molden–Gates indicators** (`src/indicators.py`): adequacy, dependability, equity and the Gini coefficient (Table 5).
+
+The results of version 1.0.0 are unchanged; the new runs are stored next to them (`*_extra.*`, `staged_*`, `effort_*`).
 
 ## Archived version
 
@@ -30,11 +41,16 @@ src/
   scenarios.py                 test scenarios (Table 3) and training cases
   train_nominal.py             evolution-strategy training on the nominal canal (100 generations)
   train_continue.py            40 further generations, nominal or with randomised roughness
+  staged_rule.py               optimized staged rule (24 parameters), the fair benchmark of the network (v1.1)
+  train_extra.py               training of the staged rule and of the gate-effort variants (v1.1)
+  indicators.py                Molden-Gates adequacy, dependability, equity and Gini coefficient (v1.1)
+  evaluate_extra.py            evaluation of the staged rule and the effort variants (v1.1)
+  robustness_tests.py          measurement-noise and fault tests (v1.1)
   benchmark.py                 full-control benchmark (theoretical reference)
   evaluate.py                  evaluation of all strategies, robustness sweep, validation of the policies
   make_fig_canal.py            Fig. 2 and the values of Tables 1–2
   fig_architecture.py          Fig. 3
-  make_figures.py              Figs. 4–8 and Table 4
+  make_figures.py              Figs. 4–9 and Table 4
   paths.py                     file locations
 results/
   policies/                    trained parameters (.npy): neural supervisors and full-control benchmark
@@ -46,7 +62,13 @@ results/
   table_results.csv/.md        Table 4
   table_canal.json             values of Tables 1 and 2
   evaluation_log.txt           console output of src/evaluate.py, including numerical diagnostics
-figures/                       Figs. 2–8 (.png, 300 dpi; .pdf)
+  results_extra.json           staged rule and effort variants in the four test scenarios (v1.1)
+  robustness_extra.json        staged rule in the roughness sweep (v1.1)
+  validation_extra.json        objective J of the staged policies on the 12 training cases (v1.1)
+  timeseries_extra.npz         time series of the v1.1 runs
+  indicators.json              Molden-Gates indicators of the v1.0 runs (from timeseries.npz)
+  robustness_noise_faults.json noise and fault tests (v1.1)
+figures/                       Figs. 2–9 (.png, 300 dpi; .pdf)
 run_all.sh                     the complete pipeline in order
 ```
 
@@ -64,7 +86,10 @@ run_all.sh                     the complete pipeline in order
 | Fig. 5 (delivery equity) | `src/make_figures.py` | `figures/Fig5_shares.*` (from `results/results.json`) |
 | Fig. 6 (water levels) | `src/make_figures.py` | `figures/Fig6_levels.*` (from `results/timeseries.npz`) |
 | Fig. 7 (gate effort) | `src/make_figures.py` | `figures/Fig7_gates.*` (from `results/results.json`) |
-| Fig. 8 (roughness sensitivity) | `src/make_figures.py` | `figures/Fig8_robustness.*` (from `results/robustness.json`) |
+| Fig. 8 (gate-effort trade-off) | `src/make_figures.py` | `figures/Fig8_effort.*` (from `results/results.json`, `results/results_extra.json`) |
+| Fig. 9 (roughness sensitivity) | `src/make_figures.py` | `figures/Fig9_robustness.*` (from `results/robustness.json`, `results/robustness_extra.json`) |
+| Table 5 (Molden–Gates indicators) | `src/evaluate_extra.py` | `results/results_extra.json`, `results/indicators.json` |
+| Table 6 (noise and faults) | `src/robustness_tests.py` | `results/robustness_noise_faults.json` |
 
 ## Reproducing the results
 
@@ -80,10 +105,12 @@ python src/make_fig_canal.py
 python src/fig_architecture.py
 python src/make_figures.py
 
-# 2) Re-simulate the stored controllers in all scenarios (about 10 min, one core)
+# 2) Re-simulate the stored controllers in all scenarios (about 25 min, one core)
 python src/evaluate.py > results/evaluation_log.txt
+python src/evaluate_extra.py > results/evaluation_extra_log.txt
+python src/robustness_tests.py > results/robustness_tests_log.txt
 
-# 3) Retrain everything from scratch (about 7 h on two cores)
+# 3) Retrain everything from scratch (about 13 h on two cores)
 bash run_all.sh
 ```
 
@@ -118,6 +145,9 @@ Step 2 rewrites `results/results.json`, `robustness.json`, `validation.json` and
 | `neural_ftnom_s0` … `_s4` | +40 nominal generations, 140 in total (`policies/nominal_g140_seed*.npy`) |
 | `neural_ftdr_s0` … `_s4` | +40 generations with randomised roughness (`policies/randomised_g140_seed*.npy`) — **the neural controller reported in the article** |
 | `fcb` | full-control benchmark (`policies/fcb_<scenario>.npy`, starting from `nominal_g100_seed0.npy`) |
+| `staged_nom_s0` … `_s2` | optimized staged rule, 100 nominal generations (`policies/staged_nominal_g100_seed*.npy`) — in `results_extra.json` |
+| `staged_dr_s0` … `_s2` | staged rule, +40 generations with randomised roughness (`policies/staged_randomised_g140_seed*.npy`) — **the staged rule reported in the article** |
+| `neural_w5_s0` … `_s2`, `neural_w15_s0` … `_s2` | neural supervisor, +40 nominal generations with the gate-movement weights ×5 or ×15 (`policies/effort_w5_g140_seed*.npy`, `effort_w15_g140_seed*.npy`) |
 
 Main fields:
 
@@ -130,9 +160,11 @@ Runs in which the canal dried out contain `failed_at_h` instead of the indicator
 
 A neural policy file holds 204 values in the order W1 (8 × 11, row-major), b1 (8), W2 (12 × 8), b2 (12). Outputs 0–6 are the set-points of PK145, PK400, PK623+86, PK746+62, PK923+02, PK1087+23 and PK1177+29; outputs 7–11 are the openings of Right Bayaut, YuR-10, Central, Kurgantepa and YuR-18 (Akbulak). See `neural_policy` in `src/supervisory.py` for the mapping to feasible actions.
 
+A staged-rule policy file holds 24 values: x (5), y (5), c (7), d (7), with the branches and check gates in the same order as above. The exponent of branch j is p = 1.5 exp(x), its lag τ = 24 / (1 + exp(4 − y)) h, and the set-point of check gate k follows from c and d as described in `src/staged_rule.py`.
+
 ## Data and limitations
 
-All model data come from the canal passport (compiled around 2000 and reproduced in Seytov 2018); field measurements were not available. The model therefore describes the canal as designed and was not validated against observed levels, discharges or gate positions. The passport gives no sill or bed elevations at the structures, so the bed was taken as continuous and the effective gate widths were enlarged at three structures. The level limits are passport depths at Qmin and Qmax, and the 0.15 m/h drawdown limit is an external benchmark (Wu et al. 2021). See `data/README.md` and Sect. 5.4 of the article for details.
+All model data come from the canal passport (compiled around 2000 and reproduced in Seytov 2018); field measurements were not available. The model therefore describes the canal as designed and was not validated against observed levels, discharges or gate positions. The passport gives no sill or bed elevations at the structures, so the bed was taken as continuous and the effective gate widths were enlarged at three structures. The level limits are passport depths at Qmin and Qmax, and the 0.15 m/h drawdown limit is an external benchmark (Wu et al. 2021). See `data/README.md` and Sect. 5.6 of the article for details.
 
 ## Licence
 
